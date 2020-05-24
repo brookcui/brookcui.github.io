@@ -15,11 +15,12 @@ func main() {
 
 func newRouter() *mux.Router {
 	r := mux.NewRouter()
-	r.HandleFunc("/", HomeHandler)
+	r.HandleFunc("/", HelloHandler)
+	r.HandleFunc("/hello", HelloHandler).Methods("GET")
 	return r
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
+func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := fmt.Fprintf(w, "Hello world!")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
