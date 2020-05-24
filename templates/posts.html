@@ -1,0 +1,15 @@
+<div id="main">
+    {{ range .Posts }}
+        <div class="post">
+            <h3>
+                <a target="_blank" rel="noreferrer noopener" href="{{.URL}}">{{.Title}}</a>
+            </h3>
+            <div class="post-body">
+                <p>{{.FormatAbstract}}</p>
+            </div>
+            <div class="post-footer">
+                <p>POSTED BY {{ .Author.FormatUserInformation }} AT {{ .FormatPostPublishedDate }}</p>
+            </div>
+        </div>
+    {{ end }}
+</div>

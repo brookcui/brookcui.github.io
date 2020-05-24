@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-var homeTmpl *template.Template
+var tmpl *template.Template
 
 func main() {
 	r := newRouter()
@@ -19,7 +19,7 @@ func main() {
 func newRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/", indexHandler).Methods("GET")
-	homeTmpl = template.Must(template.ParseFiles("./templates/index.html"))
+	tmpl = template.Must(template.ParseGlob("./templates/*"))
 
 	staticFileDirectory := http.Dir("./static/")
 	staticFileHandler :=
@@ -30,7 +30,7 @@ func newRouter() *mux.Router {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	err := homeTmpl.Execute(w, routes.GetIndexPageData())
+	err := tmpl.ExecuteTemplate(w, "index.html",routes.GetIndexPageData())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
