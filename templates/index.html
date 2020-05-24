@@ -2,9 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rong's Blog</title>
+    <title>{{.Title}}</title>
 </head>
 <body>
-Hello world!
+<header>
+    <h1 class="blog-title">{{.Title}}</h1>
+    <nav>
+        {{ range .Navs }}
+            <a href="{{.URL}}">{{.Topic}}</a>
+        {{ end }}
+    </nav>
+</header>
+<section class="container">
+    {{ range .Posts }}
+        <div class="post">
+            <h3>
+                <a target="_blank" rel="noreferrer noopener" href="{{.URL}}">{{.Title}}</a>
+            </h3>
+            <div class="post-body">
+                <p>{{.Abstract}}</p>
+            </div>
+            <div class="post-footer">
+                <p>POSTED BY {{.Author}} AT {{.PublishedAt}}</p>
+            </div>
+        </div>
+    {{ end }}
+</section>
 </body>
 </html>

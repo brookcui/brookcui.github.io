@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/brookcui.github.io/routes"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
@@ -29,7 +30,7 @@ func newRouter() *mux.Router {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	err := homeTmpl.Execute(w, nil)
+	err := homeTmpl.Execute(w, routes.GetIndexPageData())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
