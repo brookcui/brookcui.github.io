@@ -1,11 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
+	"html/template"
 	"log"
 	"net/http"
 )
+
+var homeTmpl *template.Template
 
 func main() {
 	r := newRouter()
@@ -15,13 +17,13 @@ func main() {
 
 func newRouter() *mux.Router {
 	r := mux.NewRouter()
-	r.HandleFunc("/", HelloHandler)
-	r.HandleFunc("/hello", HelloHandler).Methods("GET")
+	r.HandleFunc("/", indexHandler).Methods("GET")
+	homeTmpl = template.Must(template.ParseFiles("./templates/index.html"))
 	return r
 }
 
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	_, err := fmt.Fprintf(w, "Hello world!")
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	err := homeTmpl.Execute(w, nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

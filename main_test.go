@@ -1,14 +1,23 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := fmt.Fprintf(w, "Hello world!")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func TestRouter(t *testing.T) {
 	r := newRouter()
+	r.HandleFunc("/hello", helloHandler).Methods("GET")
 	mockServer := httptest.NewServer(r)
 
 	// We make a GET request to the "hello" route we defined in the router
@@ -40,6 +49,7 @@ func TestRouter(t *testing.T) {
 
 func TestRouterForNonExistentRoute(t *testing.T) {
 	r := newRouter()
+	r.HandleFunc("/hello", helloHandler).Methods("GET")
 	mockServer := httptest.NewServer(r)
 
 	// We make a POST request to the "hello" route that we didn't define
