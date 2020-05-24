@@ -17,9 +17,11 @@ func main() {
 }
 
 func newRouter() *mux.Router {
+	tmpl = template.Must(template.ParseGlob("./templates/*"))
+
 	r := mux.NewRouter()
 	r.HandleFunc("/", indexHandler).Methods("GET")
-	tmpl = template.Must(template.ParseGlob("./templates/*"))
+	r.HandleFunc("/about", aboutHandler).Methods("GET")
 
 	staticFileDirectory := http.Dir("./static/")
 	staticFileHandler :=
@@ -30,7 +32,14 @@ func newRouter() *mux.Router {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	err := tmpl.ExecuteTemplate(w, "index.html",routes.GetIndexPageData())
+	err := tmpl.ExecuteTemplate(w, "index.html", routes.GetIndexPageData())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
+	err := tmpl.ExecuteTemplate(w, "about.html", nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
