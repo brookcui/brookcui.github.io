@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/brookcui.github.io/routes"
+	models "github.com/brookcui.github.io/models"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
@@ -30,7 +30,7 @@ func newRouter() *mux.Router {
 	return r
 }
 
-func renderTemplate(w http.ResponseWriter, tmpl string, p *routes.Page) {
+func renderTemplate(w http.ResponseWriter, tmpl string, p *models.Page) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
