@@ -1,14 +1,13 @@
 package main
 
 import (
-	"github.com/brookcui.github.io/routes"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
 	"net/http"
 )
 
-var tmpl *template.Template
+var templates = template.Must(template.ParseGlob("./templates/*"))
 
 func main() {
 	r := newRouter()
@@ -17,8 +16,6 @@ func main() {
 }
 
 func newRouter() *mux.Router {
-	tmpl = template.Must(template.ParseGlob("./templates/*"))
-
 	r := mux.NewRouter()
 	r.HandleFunc("/", indexHandler).Methods("GET")
 	r.HandleFunc("/about", aboutHandler).Methods("GET")
@@ -31,16 +28,22 @@ func newRouter() *mux.Router {
 	return r
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	err := tmpl.ExecuteTemplate(w, "index.html", routes.GetIndexPageData())
+type Page struct {
+	Title string
+	Body  []byte
+}
+
+func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+	err := templates.ExecuteTemplate(w, tmpl, p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "index.html", nil)
+}
+
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
-	err := tmpl.ExecuteTemplate(w, "about.html", nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	renderTemplate(w, "about.html", nil)
 }
