@@ -8,8 +8,9 @@ import (
 type User struct {
 	ID        int64     `json:"id"`
 	Username  string    `json:"username"`
-	Email     string    `json:"email"`
+	Emails    []string   `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
+	URL       string    `json:"url"`
 }
 
 func (u *User) FormatUserInformation() string {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/brookcui.github.io/routes"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
@@ -29,12 +30,7 @@ func newRouter() *mux.Router {
 	return r
 }
 
-type Page struct {
-	Title string
-	Body  []byte
-}
-
-func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+func renderTemplate(w http.ResponseWriter, tmpl string, p *routes.Page) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
