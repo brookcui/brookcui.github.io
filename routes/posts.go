@@ -2,7 +2,12 @@ package routes
 
 import (
 	"fmt"
+	"github.com/9uuso/excerpt"
 	"time"
+)
+
+const (
+	ExcerptWordLength = 20
 )
 
 // Post contains all data related to user's article posts.
@@ -18,14 +23,20 @@ type Post struct {
 	URL         string    `json:"url"`
 }
 
-func (p *Post) FormatPostPublishedDate() string {
-	year, month, day := p.PublishedAt.Date()
+func (post *Post) FormatPublishedAt() string {
+	year, month, day := post.PublishedAt.Date()
 	return fmt.Sprintf("%v %d %d", month, day, year)
 }
 
-func (p *Post) FormatAbstract() string {
-	if p.Abstract != "" {
-		return p.Abstract
+func (post *Post) FormatModifiedAt() string {
+	year, month, day := post.ModifiedAt.Date()
+	return fmt.Sprintf("%v %d %d", month, day, year)
+}
+
+func (post *Post) FormatAbstract() string {
+	if post.Abstract != "" {
+		return post.Abstract
 	}
-	return p.Content
+	post.Abstract = excerpt.Make(post.Content, ExcerptWordLength)
+	return post.Abstract
 }
