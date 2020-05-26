@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 var templates = template.Must(template.ParseGlob("./templates/*"))
@@ -17,8 +18,8 @@ func main() {
 
 func newRouter() *mux.Router {
 	r := mux.NewRouter()
-	r.HandleFunc("/", indexHandler).Methods("GET")
-	r.HandleFunc("/about", aboutHandler).Methods("GET")
+	r.HandleFunc("/", makeHandler(indexHandler)).Methods("GET")
+	r.HandleFunc("/about", makeHandler(aboutHandler)).Methods("GET")
 
 	staticFileDirectory := http.Dir("./static/")
 	staticFileHandler :=
@@ -34,16 +35,33 @@ type Page struct {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
-	err := templates.ExecuteTemplate(w, tmpl, p)
+	err := templates.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "index.html", nil)
+var validPath = regexp.MustCompile("^/(about)?$")
+
+func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		m := validPath.FindStringSubmatch(r.URL.Path)
+		if m == nil {
+			http.NotFound(w, r)
+			return
+		}
+		if m[0] == "/" {
+			fn(w, r, "index")
+			return
+		}
+		fn(w, r, m[1])
+	}
 }
 
-func aboutHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "about.html", nil)
+func indexHandler(w http.ResponseWriter, r *http.Request, title string) {
+	renderTemplate(w, title, nil)
+}
+
+func aboutHandler(w http.ResponseWriter, r *http.Request, title string) {
+	renderTemplate(w, title, nil)
 }
